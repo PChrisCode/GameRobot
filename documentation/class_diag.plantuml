@@ -1,0 +1,95 @@
+@startuml GameRobot
+
+interface ICook
+{
+  + Cook(): void
+  + ServeCustomers(): void
+  + CollectCoins(): void
+}
+
+class HotDogBush
+{
+  - orders: IEnumerable<IOrder>
+  - buffetCar: IBuffetCar
+  + Cook(): void
+  + ServeCustomers(): void
+  + AddOrder(IOrder): void
+}
+note right of HotDogBush::Cook
+  1. if onions are empty & need an onion then start onion cooking
+  2. if has onion read then add to bun
+    - don't forget to remove the onion game object from the list
+  3. if fries are empty then start fries cooking
+  4. if has empty bun slot then add bun
+  5. if has empty bun then add meat
+  6. if has order assigned to meal then prepare
+  7. if has order prepared then mark meal as ready
+end note
+note right of HotDogBush::ServeCustomers
+  1. if has meal marked as ready then serve customer
+    - don't forget to remove the order & the meal & the fries & the onions game object from the list
+  2. if has fries ready then serve customers
+  3. serve customers with lemonade
+  4. if has empty order then remove
+end note
+
+interface IOrder
+{
+  + Customer: IGameObject
+  + OrderItems: IEnumerable<IGameObject>
+}
+
+interface IBuffetCar
+{
+  + Tray: ITray
+  + Grill: IGrill
+  + Resources: IResources
+}
+
+interface ITray
+{
+  + HotDogBuns: IEnumerable<IResourceSlot>
+  + HamburgerBuns: IEnumerable<IResourceSlot>
+}
+
+interface IGrill
+{
+  + HotDogs: IEnumerable<IResourceSlot>
+  + Hamburgers: IEnumerable<IResourceSlot>
+}
+
+interface IResourceSlot
+{
+  + GameObject: IGameObject
+}
+
+class ResourceSlot
+{
+  - resource: IGameObject
+}
+
+interface IResources
+{
+  + Ketchup: IResourceSlot
+  + Lemonade: IResourceSlot
+  + HotDogBuns: IResourceSlot
+  + HamburgerBuns: IResourceSlot
+  
+  + HasOnions: bool
+  + GetNextOnion: IGameObject
+  + AddRawOnion
+  + Onions: IGameObject
+}
+
+interface IGameObject
+{
+  + X: int
+  + Y: int
+  + Name: string
+}
+
+IGameObject <|-- IResourceSlot
+IResourceSlot <|-- ResourceSlot
+ICook <|-- HotDogBush
+
+@enduml
